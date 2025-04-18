@@ -54,19 +54,6 @@ app.use('/api/rider', require('./routes/rider.routes'));
 app.use('/api/users', require('./routes/user.routes'));
 app.use('/api/cart', require('./routes/cart.routes'));
 
-// Serve static assets in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/build')));
-  app.use('/rider', express.static(path.join(__dirname, '../rider-app/build')));
-  
-  app.get('/', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
-  });
-  
-  app.get('/rider/*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../rider-app/build', 'index.html'));
-  });
-}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
