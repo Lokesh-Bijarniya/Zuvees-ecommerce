@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
 
   // Google login
   const loginWithGoogle = () => {
-    window.location.href = 'http://localhost:5050/api/auth/google';
+    window.location.href = 'https://zuvees-ecommerce.onrender.com/api/auth/google';
   };
 
   // Check if email is approved
