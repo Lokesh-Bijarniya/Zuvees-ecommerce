@@ -41,7 +41,8 @@ exports.googleCallback = async (req, res) => {
     const options = {
       expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production'
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'none'
     };
     
     // Determine redirect URL based on user role
@@ -69,7 +70,9 @@ exports.googleCallback = async (req, res) => {
 exports.logout = (req, res) => {
   res.cookie('token', 'none', {
     expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'none'
   });
   
   res.status(200).json({

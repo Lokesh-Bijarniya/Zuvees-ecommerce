@@ -15,6 +15,10 @@ exports.protect = async (req, res, next) => {
     token = req.cookies.token;
   }
 
+  console.log("cookies",req.cookies);
+
+  console.log("token",token);
+
   if (!token) {
     return res.status(401).json({ message: 'Not authorized to access this route' });
   }
