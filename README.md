@@ -173,9 +173,4 @@ Pull requests are welcome! Please open an issue first to discuss your ideas or r
 
 ## Questions?
 Open an issue on [GitHub](https://github.com/Lokesh-Bijarniya/Zuvees-ecommerce/issues) or contact the maintainer.
-# Zuvees-ecommerce
-# Zuvees-ecommerce
-# Zuvees-ecommerce
-# Zuvees-ecommerce
-# Zuvees-ecommerce
-# Zuvees-ecommerce
+
