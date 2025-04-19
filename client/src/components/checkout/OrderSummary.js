@@ -3,7 +3,7 @@ import React from "react";
 import { FaCreditCard, FaMapMarkerAlt, FaPaypal } from "react-icons/fa";
 
 const OrderSummary = ({
-  cartItems,
+  cartItems = [],
   totalPrice,
   tax,
   orderTotal,
@@ -24,31 +24,35 @@ const OrderSummary = ({
         </h3>
 
         <div className="space-y-4 max-h-60 overflow-y-auto pr-2">
-          {cartItems.map((item, index) => (
-            <div key={index} className="flex items-start">
-              <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0">
-                <img
-                  src={item.product.images[0]}
-                  alt={item.product.name}
-                  className="w-full h-full object-cover border border-blue-200/20"
-                />
-              </div>
-              <div className="ml-3 flex-grow">
-                <p className="text-sm font-medium text-cyan-200 line-clamp-1">
-                  {item.product.name}
-                </p>
-                <div className="flex justify-between">
-                  <p className="text-xs text-blue-100/80">
-                    {item.variant.size}, {item.variant.color.name}
+          {cartItems && cartItems.length > 0 ? (
+            cartItems.map((item, index) => (
+              <div key={index} className="flex items-start">
+                <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0">
+                  <img
+                    src={item.product.images[0]}
+                    alt={item.product.name}
+                    className="w-full h-full object-cover border border-blue-200/20"
+                  />
+                </div>
+                <div className="ml-3 flex-grow">
+                  <p className="text-sm font-medium text-cyan-200 line-clamp-1">
+                    {item.product.name}
                   </p>
-                  <p className="text-xs text-blue-100/80">x{item.quantity}</p>
+                  <div className="flex justify-between">
+                    <p className="text-xs text-blue-100/80">
+                      {item.variant.size}, {item.variant.color.name}
+                    </p>
+                    <p className="text-xs text-blue-100/80">x{item.quantity}</p>
+                  </div>
+                </div>
+                <div className="ml-2 text-sm font-semibold text-cyan-300">
+                  ${(item.variant.price * item.quantity).toFixed(2)}
                 </div>
               </div>
-              <div className="ml-2 text-sm font-semibold text-cyan-300">
-                ${(item.variant.price * item.quantity).toFixed(2)}
-              </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-blue-100/70">No items in cart.</p>
+          )}
         </div>
       </div>
 

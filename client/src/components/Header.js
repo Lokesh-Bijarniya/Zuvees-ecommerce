@@ -2,15 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { FaShoppingCart, FaUser, FaSignOutAlt, FaTruck } from 'react-icons/fa';
+import { useNotifications } from '../context/NotificationContext';
+import { FaShoppingCart, FaUser, FaSignOutAlt, FaTruck, FaBell } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Header = () => {
   const { user, isAuthenticated, isAdmin, isRider, isCustomer, logout } = useAuth();
   const { totalItems } = useCart();
+  const { notifications, unreadCount, markAllAsRead } = useNotifications();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
   const location = useLocation();
 
   // console.log(user?.avatar);
@@ -29,11 +32,12 @@ const Header = () => {
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setIsProfileMenuOpen(false);
+    setIsNotifOpen(false);
   }, [location]);
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 \
+      className={`fixed  top-0 left-0 right-0 z-50 transition-all duration-300 \
         ${isScrolled ? 'bg-gradient-to-r from-gray-950 via-gray-900 to-surface shadow-xl-glass py-2 backdrop-blur-md' : 'bg-gradient-to-r from-gray-950 via-gray-900 to-surface py-4'} \
         `}
     >
@@ -67,7 +71,7 @@ const Header = () => {
           </nav>
 
           {/* Right Side Icons */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 md:space-x-6">
             {/* Cart Icon - Only show for customers or non-authenticated users */}
             {(!isAuthenticated || isCustomer) && (
               <Link to="/cart">
@@ -89,6 +93,59 @@ const Header = () => {
                   )}
                 </motion.div>
               </Link>
+            )}
+            
+            {/* Notification Icon - Show for authenticated users */}
+            {isAuthenticated && (
+              <div className="relative flex items-center">
+                <button
+                  className="focus:outline-none"
+                  onClick={() => setIsNotifOpen(open => !open)}
+                  title="Notifications"
+                >
+                  <FaBell className={`text-xl ${isScrolled ? 'text-yellow-400' : 'text-yellow-500'}`} />
+                  {unreadCount > 0 && (
+                    <motion.span
+                      className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+                    >
+                      {unreadCount}
+                    </motion.span>
+                  )}
+                </button>
+                {/* Notification Dropdown */}
+                <AnimatePresence>
+                  {isNotifOpen && (
+                    <motion.div
+                      className="absolute right-0 top-10 md:top-12 w-80 bg-gray-900 rounded-md shadow-lg py-1 z-50 border border-yellow-400/20"
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      style={{ minWidth: '18rem', maxWidth: '95vw' }}
+                    >
+                      <div className="px-4 py-2 border-b border-border/40 flex items-center justify-between">
+                        <span className="text-sm font-bold text-yellow-300">Notifications</span>
+                        <button className="text-xs text-yellow-400 hover:underline" onClick={markAllAsRead}>Mark all as read</button>
+                      </div>
+                      <div className="max-h-64 overflow-y-auto divide-y divide-gray-800">
+                        {notifications.length === 0 ? (
+                          <div className="px-4 py-3 text-sm text-gray-400">No notifications yet.</div>
+                        ) : (
+                          notifications.slice(0, 5).map((n) => (
+                            <div key={n.id} className="px-4 py-3 text-sm text-yellow-100 flex flex-col">
+                              <span className="font-semibold">Order #{n.orderId} status: <span className="capitalize">{n.status}</span></span>
+                              <span className="text-xs text-gray-400">{new Date(n.createdAt).toLocaleString()}</span>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             )}
             
             {/* User Menu */}

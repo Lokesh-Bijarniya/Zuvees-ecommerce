@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaLock } from 'react-icons/fa';
 import { useCart } from '../context/CartContext';
+import { createOrder } from '../utils/api';
 import AddressForm from '../components/checkout/AddressForm';
 import OrderSummary from '../components/checkout/OrderSummary';
 import PaymentForm from '../components/checkout/PaymentForm';
@@ -40,9 +41,33 @@ const Checkout = () => {
 
   // Step 3: Confirmation
   const handleConfirmOrder = async () => {
-    // Here you would POST order to backend, then clear cart and navigate or show success
-    await clearCart();
-    navigate('/my-orders');
+    try {
+      // Compose the order data with required fields for backend validation
+      const orderData = {
+        items: cartItems.map(item => ({
+          product: item.product._id,
+          variant: {
+            color: item.variant.color,
+            size: item.variant.size,
+            price: item.variant.price,
+          },
+          quantity: item.quantity,
+        })),
+        shippingAddress,
+        paymentInfo,
+        // These must match your backend schema:
+        paymentMethod: paymentInfo?.paymentMethod || 'credit-card',
+        totalAmount: orderTotal, // Use the exact name expected by backend
+        tax,
+      };
+
+      await createOrder(orderData);
+      await clearCart();
+      navigate('/my-orders');
+    } catch (err) {
+      alert('Order could not be placed. Please try again.');
+      console.error(err);
+    }
   };
 
   return (

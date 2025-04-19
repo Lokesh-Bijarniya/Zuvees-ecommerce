@@ -17,6 +17,12 @@ A full-stack, scalable, and modern e-commerce platform for selling fans and air 
 - [Deployment](#deployment)
 - [Contributing](#contributing)
 - [License](#license)
+- [Improved Setup Instructions](#-improved-setup-instructions)
+- [API Documentation](#-api-documentation)
+- [Architecture Diagram](#-architecture-diagram)
+- [Feature List](#-feature-list)
+- [Screenshots & Demo](#-screenshots--demo)
+- [More Improvements](#-more-improvements)
 
 ---
 
@@ -164,6 +170,109 @@ Pull requests are welcome! Please open an issue first to discuss your ideas or r
 
 ---
 
+## Improved Setup Instructions
+
+### Local Development
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Lokesh-Bijarniya/Zuvees-ecommerce.git
+   cd Zuvees-ecommerce
+   ```
+2. **Install dependencies:**
+   - Backend:
+     ```bash
+     cd server && npm install
+     ```
+   - Frontend (Customer):
+     ```bash
+     cd ../client && npm install
+     ```
+   - Rider App:
+     ```bash
+     cd ../rider-app && npm install
+     ```
+3. **Configure environment variables:**
+   - Copy `.env.example` to `.env` in `/server` and fill in all required fields (see below).
+4. **Run the apps:**
+   - Backend: `npm run dev` (in `/server`)
+   - Frontend: `npm start` (in `/client`)
+   - Rider App: `npm start` (in `/rider-app`)
+
+### Production Deployment
+1. Set up production `.env` variables (MongoDB Atlas, Cloudinary, OAuth, etc.).
+2. Build frontend & rider-app:
+   ```bash
+   cd client && npm run build
+   cd ../rider-app && npm run build
+   ```
+3. Deploy `/server`, `/client/build`, and `/rider-app/build` to your server or cloud provider (e.g., Render, Vercel, Netlify).
+
+---
+
+## API Documentation
+
+- **Swagger UI:** [Not yet implemented] (Recommended: add `/api-docs` using `swagger-jsdoc` & `swagger-ui-express`)
+- **Postman Collection:** [Download here](./docs/Zuvee-API.postman_collection.json) *(add this file to your repo!)*
+- **Markdown Reference:**
+
+### Example: Create Order
+```http
+POST /api/orders
+Content-Type: application/json
+Authorization: Bearer <JWT>
+
+{
+  "items": [ ... ],
+  "shippingAddress": { ... }
+}
+```
+
+### Main Endpoints
+| Method | Endpoint           | Description                  |
+|--------|--------------------|------------------------------|
+| POST   | /api/auth/google   | Google OAuth login           |
+| GET    | /api/products      | List all products            |
+| POST   | /api/orders        | Place new order              |
+| PATCH  | /api/orders/:id    | Update order status          |
+| ...    | ...                | ...                          |
+
+---
+
+## Architecture Diagram
+- ![Architecture Diagram](./docs/architecture.png)
+- *(Edit or export from [draw.io](https://app.diagrams.net/) or [Excalidraw](https://excalidraw.com/); place the image in `/docs`)*
+
+---
+
+## Feature List
+- Product catalog, cart, checkout
+- Google OAuth for all roles
+- Admin dashboard for order/product management
+- Rider PWA for delivery management
+- Real-time notifications (Socket.io)
+- Cloudinary image uploads
+- Responsive, modern UI (Tailwind, framer-motion)
+- ...and more!
+
+---
+
+## Screenshots & Demo
+- ![Homepage Screenshot](./docs/screenshot-home.png)
+- ![Admin Dashboard](./docs/screenshot-admin.png)
+- ![Rider App](./docs/screenshot-rider.png)
+- *(Add your own screenshots to `/docs`)*
+- **Demo Video:** [YouTube Demo](https://youtu.be/your-demo-link) *(replace with your video link)*
+
+---
+
+## More Improvements
+- [ ] Add Swagger UI at `/api-docs`
+- [ ] Upload Postman collection and architecture diagram to `/docs`
+- [ ] Add more screenshots and a short demo video/gif
+- [ ] Keep this README up to date as features grow!
+
+---
+
 ## Credits
 - Built by [Lokesh Bijarniya](https://github.com/Lokesh-Bijarniya)
 - Images provided by [Unsplash](https://unsplash.com/) (royalty-free)
@@ -173,4 +282,3 @@ Pull requests are welcome! Please open an issue first to discuss your ideas or r
 
 ## Questions?
 Open an issue on [GitHub](https://github.com/Lokesh-Bijarniya/Zuvees-ecommerce/issues) or contact the maintainer.
-

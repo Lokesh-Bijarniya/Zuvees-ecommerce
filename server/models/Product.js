@@ -71,4 +71,9 @@ const ProductSchema = new mongoose.Schema({
   }
 });
 
+// Indexes for performance
+ProductSchema.index({ name: 1 });
+ProductSchema.index({ category: 1 });
+ProductSchema.index({ 'variants.sku': 1 });
+
 module.exports = mongoose.model('Product', ProductSchema);

@@ -5,7 +5,8 @@ const {
   createProduct,
   updateProduct,
   deleteProduct,
-  addProductReview
+  addProductReview,
+  validateProduct
 } = require('../controllers/product.controller');
 const { protect, authorize } = require('../middleware/auth');
 
@@ -19,8 +20,8 @@ router.get('/:id', getProduct);
 router.post('/:id/reviews', protect, addProductReview);
 
 // Admin only routes
-router.post('/', protect, authorize('admin'), createProduct);
-router.put('/:id', protect, authorize('admin'), updateProduct);
+router.post('/', validateProduct, protect, authorize('admin'), createProduct);
+router.put('/:id', validateProduct, protect, authorize('admin'), updateProduct);
 router.delete('/:id', protect, authorize('admin'), deleteProduct);
 
 module.exports = router;

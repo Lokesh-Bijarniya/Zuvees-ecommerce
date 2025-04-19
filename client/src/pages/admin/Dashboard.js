@@ -57,7 +57,7 @@ const AdminDashboard = () => {
         // Calculate stats
         const totalOrders = orders.length;
         const pendingOrders = orders.filter(
-          (order) => order.orderStatus === "paid"
+          (order) => order.orderStatus === "pending"
         ).length;
         const shippedOrders = orders.filter(
           (order) => order.orderStatus === "shipped"
@@ -123,7 +123,7 @@ const AdminDashboard = () => {
 
   // Get pending orders that need attention
   const ordersNeedingAttention = orders
-    .filter((order) => order.orderStatus === "paid")
+    .filter((order) => order.orderStatus === "pending")
     .slice(0, 5);
 
   return (
@@ -212,6 +212,14 @@ const AdminDashboard = () => {
             <FaShippingFast className="text-3xl text-purple-300 group-hover:scale-110 transition-transform mb-2" />
             <span className="text-lg font-semibold text-purple-100">Manage Riders</span>
             <span className="text-sm text-purple-300/70">View and add delivery personnel</span>
+          </Link>
+          <Link
+            to="/admin/dashboard/analytics"
+            className="bg-white/10 backdrop-blur-xl border border-blue-200/20 rounded-2xl shadow-xl hover:shadow-2xl transition-shadow p-6 flex flex-col items-center group hover:bg-blue-900/10"
+          >
+            <FaChartLine className="text-3xl text-blue-300 group-hover:scale-110 transition-transform mb-2" />
+            <span className="text-lg font-semibold text-blue-100">Analytics</span>
+            <span className="text-sm text-blue-300/70">Sales, users, top products</span>
           </Link>
         </motion.div>
 

@@ -42,7 +42,7 @@ exports.googleCallback = async (req, res) => {
       expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none'
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
     };
     
     // Determine redirect URL based on user role
@@ -50,7 +50,7 @@ exports.googleCallback = async (req, res) => {
     if (req.user.role === 'admin') {
       redirectUrl = `${process.env.CLIENT_URL}/admin/dashboard`;
     } else if (req.user.role === 'rider') {
-      redirectUrl = `${process.env.RIDER_URL}/dashboard`;
+      redirectUrl = `${process.env.RIDER_URL}/rider/dashboard`;
     } else {
       console.log('Invalid user role:', req.user.role);
       redirectUrl = `${process.env.CLIENT_URL}`;
@@ -58,6 +58,7 @@ exports.googleCallback = async (req, res) => {
     
     // Set cookie and redirect
     res.cookie('token', token, options);
+    // console.log("token sent",token);
     res.redirect(redirectUrl);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -72,7 +73,7 @@ exports.logout = (req, res) => {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'none'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   });
   
   res.status(200).json({

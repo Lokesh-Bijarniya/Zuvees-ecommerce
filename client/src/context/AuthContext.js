@@ -13,9 +13,11 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadUser = async () => {
       try {
+        // console.log("api 🔴",api);
         const res = await api.get('/auth/me', {
           withCredentials: true
         });
+        // console.log("res 🔴",res);
         
         if (res.data.success) {
           setUser(res.data.data);

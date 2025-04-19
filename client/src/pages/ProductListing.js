@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import {
   FaFilter,
   FaSearch,
@@ -8,9 +8,10 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
-import ProductCard from "../components/ProductCard";
 import Spinner from "../components/Spinner";
 import { getProducts } from "../utils/api";
+
+const ProductCard = React.lazy(() => import("../components/ProductCard"));
 
 const ProductListing = () => {
   const location = useLocation();
@@ -478,17 +479,19 @@ const ProductListing = () => {
                 <p className="text-blue-200">Showing {filteredProducts.length} {filteredProducts.length === 1 ? "product" : "products"}</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
-                {filteredProducts.map((product) => (
-                  <motion.div
-                    key={product._id}
-                    className="h-full"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <ProductCard product={product} />
-                  </motion.div>
-                ))}
+                <Suspense fallback={<div>Loading...</div>}>
+                  {filteredProducts.map((product) => (
+                    <motion.div
+                      key={product._id}
+                      className="h-full"
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4 }}
+                    >
+                      <ProductCard product={product} />
+                    </motion.div>
+                  ))}
+                </Suspense>
               </div>
             </>
           )}

@@ -262,7 +262,7 @@ const AdminOrders = () => {
                       >
                         Details
                       </button>
-                      {order.orderStatus === 'paid' && (
+                      {(order.orderStatus === 'paid' || order.orderStatus === 'pending') && (
                         <button
                           className="bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-semibold px-3 py-1 rounded shadow transition-colors"
                           onClick={() => handleShipOrder(order._id)}

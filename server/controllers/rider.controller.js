@@ -1,4 +1,6 @@
 const Order = require('../models/Order');
+const User = require('../models/User');
+const { notifyOrderStatus } = require('./order.controller');
 
 // @desc    Get rider's assigned orders
 // @route   GET /api/rider/orders
@@ -60,6 +62,10 @@ exports.updateOrderStatus = async (req, res) => {
     
     const updatedOrder = await order.save();
     
+    // Send email notification to user on status update
+    const user = await User.findById(order.user);
+    await notifyOrderStatus(order, user, orderStatus);
+
     res.status(200).json({
       success: true,
       data: updatedOrder

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getUserProfile, updateUserProfile } = require('../controllers/user.controller');
+const { getUserProfile, updateUserProfile, uploadAvatar, upload } = require('../controllers/user.controller');
 const { protect } = require('../middleware/auth');
 
 // All routes in this file are protected and require authentication
@@ -15,5 +15,8 @@ router.get('/profile', getUserProfile);
 // @desc    Update user profile
 // @access  Private
 router.put('/profile', updateUserProfile);
+
+// Avatar upload endpoint
+router.post('/avatar', protect, upload.single('avatar'), uploadAvatar);
 
 module.exports = router;

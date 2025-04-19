@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   FaEdit,
   FaEnvelope,
@@ -8,6 +8,7 @@ import {
   FaSave,
   FaTimes,
   FaUser,
+  FaCamera,
 } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import api from "../utils/api";
@@ -28,6 +29,9 @@ const Profile = () => {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
+  const [avatar, setAvatar] = useState(user?.avatar || "");
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const fileInputRef = useRef();
 
   useEffect(() => {
     if (user) {
@@ -43,8 +47,40 @@ const Profile = () => {
           country: user.address?.country || "",
         },
       });
+      setAvatar(user.avatar || "");
     }
   }, [user]);
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setAvatarLoading(true);
+    setMessage({ type: "", text: "" });
+    try {
+      const formData = new FormData();
+      formData.append("avatar", file);
+      const res = await api.post("/users/avatar", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (res.data.success && res.data.avatar) {
+        setAvatar(res.data.avatar);
+        if (typeof setUser === "function") {
+          setUser({ ...user, avatar: res.data.avatar });
+        }
+        setMessage({ type: "success", text: "Avatar updated successfully!" });
+      } else {
+        setMessage({ type: "danger", text: "Failed to update avatar." });
+      }
+    } catch (err) {
+      setMessage({ type: "danger", text: err.response?.data?.message || "Failed to update avatar." });
+    } finally {
+      setAvatarLoading(false);
+    }
+  };
+
+  const triggerAvatarUpload = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
 
   const handleChange = (e) => {
     if (
@@ -137,9 +173,36 @@ const Profile = () => {
           <div className="md:flex">
             {/* Left Side - User Info */}
             <div className="md:w-1/3 bg-gradient-to-br from-blue-900/80 to-teal-700/80 p-8 text-white flex flex-col items-center justify-center">
-              <div className="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center mb-4 shadow-xl border-4 border-blue-400/30">
-                <FaUser size={50} className="text-blue-200 drop-shadow-md" />
+              <div className="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center mb-4 shadow-xl border-4 border-blue-400/30 overflow-hidden relative">
+                {avatar ? (
+                  <img src={avatar} alt="Avatar" className="object-cover w-full h-full rounded-full" />
+                ) : (
+                  <FaUser size={50} className="text-blue-200 drop-shadow-md" />
+                )}
+                {avatarLoading && (
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center rounded-full">
+                    <span className="text-white text-xs">Uploading...</span>
+                  </div>
+                )}
+                {/* Improved Change Avatar Button */}
+                <button
+                  onClick={triggerAvatarUpload}
+                  className="absolute bottom-2 right-2 flex items-center justify-center bg-gradient-to-br from-blue-500 via-teal-400 to-blue-700 hover:from-blue-600 hover:to-teal-500 text-white rounded-full p-2 shadow-lg border-2 border-white/70 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 z-10 group"
+                  disabled={avatarLoading}
+                  title={avatar ? "Change Avatar" : "Upload Avatar"}
+                  style={{ minWidth: 0, minHeight: 0 }}
+                >
+                  <FaCamera className="text-lg group-hover:scale-110 transition-transform" />
+                  <span className="sr-only">{avatar ? "Change Avatar" : "Upload Avatar"}</span>
+                </button>
               </div>
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleAvatarChange}
+              />
               <h2 className="text-2xl font-bold text-blue-100 drop-shadow">{user.name}</h2>
               <p className="capitalize bg-white/20 px-3 py-1 rounded-full text-xs mt-2 text-blue-200 tracking-wide shadow">
                 {user.role}

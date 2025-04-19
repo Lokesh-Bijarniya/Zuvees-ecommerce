@@ -1,6 +1,7 @@
 const Order = require('../models/Order');
 const User = require('../models/User');
 const ApprovedEmail = require('../models/ApprovedEmail');
+const { notifyOrderStatus } = require('./order.controller');
 
 // @desc    Get all orders
 // @route   GET /api/admin/orders
@@ -63,7 +64,21 @@ exports.updateOrderStatus = async (req, res) => {
     order.orderStatus = orderStatus;
     
     const updatedOrder = await order.save();
-    
+
+    // Send email notification to user on status update
+    const user = await User.findById(order.user);
+    await notifyOrderStatus(order, user, orderStatus);
+
+    // ===== Socket.io Notification Logic =====
+    // Notify the user in real time about order status update
+    const io = req.app.get('io');
+    io.to(`order_${order._id}`).emit('orderStatusUpdate', {
+      orderId: order._id,
+      status: updatedOrder.orderStatus,
+      updatedAt: updatedOrder.updatedAt,
+    });
+    // ========================================
+
     res.status(200).json({
       success: true,
       data: updatedOrder

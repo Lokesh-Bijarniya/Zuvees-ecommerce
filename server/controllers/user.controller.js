@@ -1,5 +1,10 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const cloudinary = require('../utils/cloudinary');
+const multer = require('multer');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 /**
  * Get the current user's profile
@@ -80,7 +85,37 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
+/**
+ * Upload user avatar
+ * @route POST /api/users/avatar
+ * @access Private
+ */
+const uploadAvatar = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload_stream({
+      folder: 'zuvee-users',
+      resource_type: 'image',
+    }, async (error, result) => {
+      if (error) return res.status(500).json({ success: false, message: 'Cloudinary error', error });
+      // Save URL to user
+      const user = await User.findById(req.user.id);
+      user.avatar = result.secure_url;
+      await user.save();
+      res.json({ success: true, avatar: result.secure_url });
+    });
+    result.end(req.file.buffer);
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Server error', error: err.message });
+  }
+};
+
 module.exports = {
   getUserProfile,
-  updateUserProfile
+  updateUserProfile,
+  uploadAvatar,
+  upload
 };
