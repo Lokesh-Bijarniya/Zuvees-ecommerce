@@ -86,7 +86,7 @@ function App() {
                     <Route path="/admin/products" element={<AdminProducts />} />
                     <Route path="/admin/products/new" element={<ProductForm />} />
                     <Route path="/admin/products/:id/edit" element={<ProductForm />} />
-                    <Route path="/admin/analytics" element={<AdminAnalytics />} />
+                    <Route path="/admin/dashboard/analytics" element={<AdminAnalytics />} />
                     
                     {/* 404 Route */}
                     <Route path="*" element={<NotFound />} />
