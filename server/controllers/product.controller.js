@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { body, validationResult } = require('express-validator');
 const Redis = require('ioredis');
-const redisClient = new Redis();
+const redisClient = new Redis(process.env.REDIS_URL);
 
 // @desc    Get all products
 // @route   GET /api/products
